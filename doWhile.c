@@ -13,7 +13,7 @@ int main(void)
     posicao++;
     vetor[i] = i;
 
-    printf("\nInforme o caractere da posicao %i/%d: ", posicao, TAMANHO);
+    printf("\nInforme o algarismo da posicao %i/%d: ", posicao, TAMANHO);
     scanf("%d", &vetor[i]);
     i++;
 
@@ -27,7 +27,7 @@ int main(void)
   
     posicao++;
 
-    printf("\nCaractere da posicao %i/%d: %i", posicao, TAMANHO, vetor[i]);
+    printf("\nAlgarismo da posicao %i/%d: %i", posicao, TAMANHO, vetor[i]);
     
     i++;
   }
