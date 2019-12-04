@@ -7,18 +7,22 @@
 #define TEMPERATURA_LIMITE 60.0
 #define TOLERANCIA 5.0
 
+/**
+ * @author Renan Pigato Silva
+ * @author Lunior Pereira Marques
+ */
+
 float temperaturas[7][6];
 bool  diasInformados[7];
-bool  diasTemperaturaSuperior[7];
 char  caracter[1000];
 
-float calcularMediaSemana();
-float maiorTemperaturaInformada();
-float menorTemperaturaInformada();
-void  imprimirTemperaturasSuperiores();
-void  diaSemanaExtenso(char texto[100], int dia);
-int   imprimirSaida(char ch[1000]);
-int   exibirErro(FILE* fp);
+float  calcularMediaSemana();
+float  maiorTemperaturaInformada();
+float  menorTemperaturaInformada();
+void   imprimirTemperaturasSuperiores();
+char * diaSemanaExtenso(int dia);
+int    imprimirSaida(char ch[1000]);
+int    exibirErro(FILE* fp);
 
 int main ()
 {
@@ -94,25 +98,10 @@ int main ()
         maiorTemperatura = maiorTemperaturaInformada();
         menorTemperatura = menorTemperaturaInformada();
 
-        for (int i = 0; i < DIAS_SEMANA; i++)
-        {
-            if(!diasInformados[i]) {
-                continue;
-            }
-
-            imprimirSaida((char*)"\n");
-            diaSemanaExtenso((char*)"Dia da semana: ", (i+1));
-
-            for (int j = 0; j < TEMPERATURAS_DIA; j++)
-            {
-                sprintf(caracter, "\nTemperatura: %.2f", temperaturas[i][j]);
-                imprimirSaida(caracter);
-            }
-        }
+        printf(">>> -------------------------------------- <<<\n");
+        printf(">>>               RESULTADO                <<<\n");-
+        printf(">>> -------------------------------------- <<<\n");
         
-        printf((char*)"\n");
-        imprimirSaida((char*)"\n");
-
         sprintf(caracter, "\nMedia da Semana: %.2f", mediaSemana);
         imprimirSaida(caracter);
         
@@ -239,97 +228,88 @@ float menorTemperaturaInformada()
 void imprimirTemperaturasSuperiores()
 {
     float limiteUltrapassado, temperatura;
-    bool  temTemperaturaSuperior = false;
+    char * diaDaSemana;
 
-    limiteUltrapassado = (TEMPERATURA_LIMITE * TOLERANCIA/100.0) + TEMPERATURA_LIMITE;    
+    limiteUltrapassado = (TEMPERATURA_LIMITE * TOLERANCIA/100.0) + TEMPERATURA_LIMITE;
+
+    imprimirSaida((char*)"\nTemperaturas:\n");
 
     for (int i = 0; i < DIAS_SEMANA; i++)
-    {
-        if(!diasInformados[i]) {
-            continue;
-        }
-                
-        for (int j = 0; j < TEMPERATURAS_DIA; j++)
-        {
-            temperatura = temperaturas[i][j];
+    {           
+        diaDaSemana = diaSemanaExtenso((i+1));
 
-            if(temperatura <= limiteUltrapassado) {
-                continue;
-            }
-                
-            diasTemperaturaSuperior[i] = true;
-            temTemperaturaSuperior = true;
-        }
-    }
-
-    if(temTemperaturaSuperior) {
-
-        sprintf(caracter, "\nTemperaturas Superiores a tolerancia:");
+        sprintf(caracter, "%s", diaDaSemana);
         imprimirSaida(caracter);
 
-        for (int ii = 0; ii < DIAS_SEMANA; ii++)
+        imprimirSaida((char*)" => ");
+
+        for (int j = 0; j < TEMPERATURAS_DIA; j++)
         {
-            if(!diasTemperaturaSuperior[ii]) {
-                continue;
+            imprimirSaida((char*)"|");
+
+            temperatura = temperaturas[i][j];
+
+            if(!diasInformados[i]) {
+                temperatura = 00.0;
             }
-                    
-            diaSemanaExtenso((char*)"\nDia: ", (ii+1));
 
-            for (int jj = 0; jj < TEMPERATURAS_DIA; jj++)
-            {
-                temperatura = temperaturas[ii][jj];
+            sprintf(caracter, " %2.2f ", temperatura);
+            imprimirSaida(caracter);
 
-                if(temperatura <= limiteUltrapassado) {
-                    continue;
-                }
-
-                sprintf(caracter, "\nTemperatura: %f", temperatura);
-                imprimirSaida(caracter);
+            if(temperatura > limiteUltrapassado) {
+                imprimirSaida((char*)"*");
+            } else {
+                imprimirSaida((char*)" ");
+            }
+                
+            if((j+1) == TEMPERATURAS_DIA) {
+                imprimirSaida((char*)"|");
             }
         }
+
+        imprimirSaida((char*)"\n");
     }
 
     imprimirSaida((char*)"\n");
 }
 
-void diaSemanaExtenso(char texto[100], int dia) {
+char * diaSemanaExtenso(int dia) {
 
-    char diaSemana[7];
+    static char diaSemana[7];
 
     // printf("debug------------: dia: %i\n", dia);
 
     switch(dia)
     {
         case 1:
-            strcpy(diaSemana, "Domingo");
+            sprintf(diaSemana, "%s", "Domingo");
             break;
 
         case 2:
-            strcpy(diaSemana, "Segunda");
+            sprintf(diaSemana, "%s", "Segunda");
             break;
 
         case 3:
-            strcpy(diaSemana, "Terca");
+            sprintf(diaSemana, "%s", "Terca  ");
             break;
 
         case 4:
-            strcpy(diaSemana, "Quarta");
+            sprintf(diaSemana, "%s", "Quarta ");
             break;
 
         case 5:
-            strcpy(diaSemana, "Quinta");
+            sprintf(diaSemana, "%s", "Quinta ");
             break;
 
         case 6:
-            strcpy(diaSemana, "Sexta");
+            sprintf(diaSemana, "%s", "Sexta  ");
             break;
 
         case 7:
-            strcpy(diaSemana, "Sabado");
+            sprintf(diaSemana, "%s", "Sabado ");
             break;
     }
     // printf("debug------------: diaSemana: %s\n", diaSemana);
 
-    sprintf(caracter, (char*)"%s %s", texto, diaSemana);
-    imprimirSaida(caracter);
+    return diaSemana;
 }

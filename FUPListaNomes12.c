@@ -1,41 +1,44 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
+#include <stdlib.h>
 
 #define TOTAL_NOMES 12
 
-char nomes[12][100];
+/**
+ * @author Renan Pigato Silva
+ * @author Lunior Pereira Marques
+ */
+
+char nomes[12][100], caracter[1000];
 int  ocorrencias[12];
 
-int verificarPosicaoNome(char nome[100])
-{
-    char nomeArmazenado[100];
-
-    for (int posicao = 0; posicao < TOTAL_NOMES; posicao++)
-    {
-        strcpy(nomeArmazenado, nomes[posicao]);
-
-        if(strcmp(nomeArmazenado, nome) == 0) {
-            return posicao;
-        }
-    }
-
-    return -1;
-}
+int imprimirSaida(char ch[1000]);
+int verificarPosicaoNome(char nome[100]);
 
 int main ()
 {
   
-  // FILE* fp = fopen("dados.txt", "w");
-  // if(!fp) {
-  //   perror("File opening failed");
-  //   return EXIT_FAILURE;
-  // }
-
     bool   terminou = false;
     int    cont = 0, posicao, ocorrenciaAtual;
     float  percentualAtual;
     char   nome[100], nomeAtual[100];
+
+    FILE* fp = fopen("temperaturas.txt", "w");
+
+    if(!fp) {
+        perror("Falhou ao abrir o arquivo");
+        return EXIT_FAILURE;
+    }
+
+    if(fputs((char*)"", fp) == EOF) {
+        
+        if (ferror(fp)) {
+
+            printf("Ocorreu um erro ao gravar em arquivo");
+            return EXIT_FAILURE;
+        }
+    }
 
     while(!terminou) {
 
@@ -66,15 +69,54 @@ int main ()
         strcpy(nomeAtual, nomes[i]);
         ocorrenciaAtual = ocorrencias[i];
         percentualAtual = ((float)ocorrenciaAtual / (float)TOTAL_NOMES) * 100.0;
-        // percentualAtual = roundf(percentualAtual);
 
         if(ocorrenciaAtual == 0) {
             continue;
         }
 
-        printf("\nNome atual: %s, ocorrencias: %i, percentual: %.2f%%", nomeAtual, ocorrenciaAtual, percentualAtual);
+        sprintf(caracter, "\nNome atual: %s, ocorrencias: %i, percentual: %.2f%%", nomeAtual, ocorrenciaAtual, percentualAtual);
+        imprimirSaida(caracter);
     }
     printf("\n");
 
     return 0;
+}
+
+int verificarPosicaoNome(char nome[100])
+{
+    char nomeArmazenado[100];
+
+    for (int posicao = 0; posicao < TOTAL_NOMES; posicao++)
+    {
+        strcpy(nomeArmazenado, nomes[posicao]);
+
+        if(strcmp(nomeArmazenado, nome) == 0) {
+            return posicao;
+        }
+    }
+
+    return -1;
+}
+
+int imprimirSaida(char ch[1000])
+{
+    FILE* fp = fopen("nomes.txt", "a");
+
+    if(!fp) {
+        perror("Falhou ao abrir o arquivo");
+        return EXIT_FAILURE;
+    }
+
+    if(fputs(ch, fp) == EOF) {
+
+        if (ferror(fp)) {
+
+            printf("Ocorreu um erro ao gravar em arquivo");
+            return EXIT_FAILURE;
+        }
+    }
+
+    printf("%s", ch);
+    
+    fclose(fp);
 }
